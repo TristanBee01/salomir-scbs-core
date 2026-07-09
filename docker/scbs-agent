@@ -1,0 +1,28 @@
+# Base Image: NVIDIA PyTorch NGC for optimized CUDA environments
+FROM nvcr.io/nvidia/pytorch:23.10-py3
+
+# Set environment variables for reproducibility (Artifact Parity)
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    fio \
+    iperf3 \
+    sysstat \
+    iputils-ping \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install specific Python dependencies for testing
+COPY requirements.txt /workspace/
+RUN pip install --no-cache-dir -r /workspace/requirements.txt
+
+# Copy Salomir workloads
+WORKDIR /workspace/scbs
+COPY workloads/ /workspace/scbs/workloads/
+COPY network-stress/ /workspace/scbs/network-stress/
+COPY config/ /workspace/scbs/config/
+
+# Set the entrypoint to the master orchestration script
+ENTRYPOINT ["python", "/workspace/scbs/workloads/run_audit.py"]
