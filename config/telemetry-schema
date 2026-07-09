@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Salomir SCBS Telemetry Report",
+  "type": "object",
+  "properties": {
+    "timestamp": { "type": "string", "format": "date-time" },
+    "hardware_meta": {
+      "type": "object",
+      "properties": {
+        "gpu_model": { "type": "string" },
+        "cuda_version": { "type": "string" }
+      }
+    },
+    "results": {
+      "type": "object",
+      "properties": {
+        "compute_tflops": { "type": "number" },
+        "storage_iops_read": { "type": "number" },
+        "network_bandwidth_gbps": { "type": "number" },
+        "thermal_throttling_detected": { "type": "boolean" }
+      },
+      "required": ["compute_tflops", "storage_iops_read", "network_bandwidth_gbps", "thermal_throttling_detected"]
+    }
+  },
+  "required": ["timestamp", "hardware_meta", "results"]
+}
